@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foxconn.cz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contact-form form {
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+        }
+
+        .contact-form label {
+            margin-bottom: 5px;
+        }
+
+        .contact-form input, .contact-form textarea {
+            margin-bottom: 15px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .contact-form button {
+            background-color: #03528fe9;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-form">
+        <h1>zadejte přihlašovací údaje</h1>
+        <form action="{{ url_for('handle_form') }}" method="post">
+            <label for="name">Jméno:</label>
+            <input type="text" id="name" name="name" placeholder="name">
+            <label for="password">Heslo:</label>
+            <input type="password" name="password" placeholder="password"/>
+            <button type="submit">Odeslat</button>
+        </form>
+    </div>
+</body>
+</html>
