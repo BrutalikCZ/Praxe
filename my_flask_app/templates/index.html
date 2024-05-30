@@ -45,11 +45,30 @@
             cursor: pointer;
             width: 100%;
         }
+
+        .flash-messages {
+            margin-bottom: 20px;
+            color: green;
+        }
+        .flash-messages .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div class="contact-form">
         <h1>zadejte přihlašovací údaje</h1>
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
         <form action="{{ url_for('handle_form') }}" method="post">
             <label for="name">Jméno:</label>
             <input type="text" id="name" name="name" placeholder="name">
