@@ -1,7 +1,8 @@
 // MyComponents.js
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-
+import { Link } from 'react-router-dom';
 export function LoginPane() {
   const [showLogin, setShowLogin] = useState(true);
 
@@ -132,28 +133,90 @@ export function SignupForm() {
 
 
 
+
+
 export function Events() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetch('/api/events', {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+    // Fetch events from API
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('/api/events', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        const eventData = await response.json();
+        setEvents(eventData.events);
+      } catch (error) {
+        console.error('Error fetching events:', error);
       }
-    })
-      .then(response => response.json())
-      .then(data => setEvents(data.events))
-      .catch(error => console.error('Error fetching events:', error));
+    };
+
+    fetchEvents();
   }, []);
 
   return (
     <div className="events-container">
       {events.map((event, index) => (
-        <div key={index} className="event-card">
-          <div className="event-name">Event: {event.event_name}</div>
-          <div className="event-time">Date: {event.date} | Time: {event.starts} - {event.ends}</div>
-        </div>
+        <Link key={index} to={`/events/${event.id}`}>
+          <div className="event-card">
+            <div className="event-name">Event: {event.event_name}</div>
+            <div className="event-time">
+              Date: {event.date} | Time: {event.starts} - {event.ends}
+            </div>
+          </div>
+        </Link>
       ))}
     </div>
   );
 }
+
+
+
+export function EventDetails() {
+  const { eventId } = useParams();
+  const [event, setEvent] = useState(null);
+
+  useEffect(() => {
+    // Fetch event details from API
+    const fetchEventDetails = async () => {
+      try {
+        const response = await fetch(`/api/events/${eventId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        const eventData = await response.json();
+        setEvent(eventData);
+      } catch (error) {
+        console.error('Error fetching event details:', error);
+      }
+    };
+
+    fetchEventDetails();
+  }, [eventId]);
+
+  if (!event) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="event-details-container">
+      <h2>{event.event_name}</h2>
+      <p><strong>Owner:</strong> {event.owner.username} ({event.owner.mail})</p>
+      <p><strong>Date:</strong> {event.date}</p>
+      <p><strong>Time:</strong> {event.starts} - {event.ends}</p>
+      <p><strong>Location:</strong> {event.location}</p>
+      <p><strong>Description:</strong> {event.description}</p>
+      <h3>Attendees:</h3>
+      <ul>
+        {event.users.map((attendee, index) => (
+          <li key={index}>{attendee.username} ({attendee.mail})</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
