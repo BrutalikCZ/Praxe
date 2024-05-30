@@ -2,7 +2,6 @@ import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for, flash
 import hashlib
 
-
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -23,13 +22,11 @@ def handle_form():
         hashedName2 = name2.hexdigest()
         name = hashedName2
 
-        
         password = request.form.get('password')
         password2 = hashlib.sha256()
         password2.update(password.encode('utf-8')) 
         hashedPassword2 = password2.hexdigest()
         password = hashedPassword2
-
 
         cursor = mydb.cursor(dictionary=True)
         
@@ -38,10 +35,8 @@ def handle_form():
         user = cursor.fetchone()
         
         if user:
-            
             return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUIcmlja3JvbGw%3D")
         else:
-            
             flash('Nesprávné přihlašovací údaje', 'error')
         
         cursor.close()
@@ -49,5 +44,4 @@ def handle_form():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run(host='0.0.0.0', port=5100, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
