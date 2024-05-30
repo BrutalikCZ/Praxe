@@ -1,5 +1,6 @@
 import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for, flash
+import hashlib
 
 
 mydb = mysql.connector.connect(
@@ -16,18 +17,31 @@ app.config.from_object('config.Config')
 def handle_form():
     if request.method == 'POST':
         name = request.form.get('name')
-        password = request.form.get('password')
+
+        name2 = hashlib.sha256()
+        name2.update(name.encode('utf-8')) 
+        hashedName2 = name2.hexdigest()
+        name = hashedName2
+
         
+        password = request.form.get('password')
+        password2 = hashlib.sha256()
+        password2.update(password.encode('utf-8')) 
+        hashedPassword2 = password2.hexdigest()
+        password = hashedPassword2
+
+
         cursor = mydb.cursor(dictionary=True)
+        
         query = "SELECT * FROM user WHERE username = %s AND password = %s"
         cursor.execute(query, (name, password))
         user = cursor.fetchone()
         
         if user:
-            # Pokud jsou přihlašovací údaje správné, přesměrujeme uživatele na jiný odkaz
-            return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+            
+            return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUIcmlja3JvbGw%3D")
         else:
-            # Pokud jsou přihlašovací údaje špatné, zobrazíme chybu
+            
             flash('Nesprávné přihlašovací údaje', 'error')
         
         cursor.close()
@@ -35,4 +49,5 @@ def handle_form():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=5100, debug=True)
