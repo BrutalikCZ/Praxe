@@ -33,20 +33,28 @@ export function LoginForm() {
     const username = loginUsername.value;
     const password = loginPassword.value;
 
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    const data = await response.json();
+      const text = await response.text();
+      console.log('API response:', text); // Přidání logování odpovědi
 
-    if (data.success) {
-      login(data.user, data.token);
-    } else {
-      alert(data.message);
+      const data = JSON.parse(text);
+
+      if (data.success) {
+        login(data.user, data.token);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('An error occurred during login. Please try again.');
     }
   };
 
